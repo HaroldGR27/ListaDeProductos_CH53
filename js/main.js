@@ -1,9 +1,10 @@
-//const main = document.getElementsByTagName("div").item(0);
-const main = document.getElementsByClassName("row").item(0);
+const prod = document.getElementById("prod")
+const ulMenu = document.getElementById("ulMenu")
 const URLMain = "https://fakestoreapi.com/products/";
 
-function getData() {
-    fetch(URLMain)
+function getData(cat) {
+    const options={"method":"GET"}
+    fetch(URLMain+cat, options)
         .then((response) => {
             console.log(response)
             response.json().then((res) => {
@@ -20,15 +21,37 @@ function getData() {
         })
 }//getData
 
-getData();
+
+function getCategories() {
+    fetch(URLMain+"categories/")
+        .then((response) => {
+            console.log(response)
+            response.json().then((res) => {
+                    res.forEach((cat) => {
+                        ulMenu.insertAdjacentHTML("afterbegin",
+                            `<li><a class="dropdown-item" onClick="getData('category/${cat}')" href="#">${cat}</a></li>`);
+                    });
+            })
+        })
+        .catch((err) => {
+            main.insertAdjacentHTML("beforeend",
+                `<div class="alert alert-danger" role="alert">
+                 ${err.message}
+            </div>`);
+        })
+}//getCategories
+
+
+getCategories();
+getData("");
 
 function createCards(prods) {
-
+    prod.innerHTML="";
     let i = 0
     do{
-        main.insertAdjacentHTML("beforeend",
+        prod.insertAdjacentHTML("beforeend",
         `
-        <div class="card" style="width: 18rem; display: flex; flex-wrap: wrap; justify-contet: center; padding:30px" >
+        <div class="card" style="width: 18rem" >
                <img src="${prods[i].image}" class="card-img-top" alt="${prods[i].title}">
            <div class="card-body">
              <h5 class="card-title">${prods[i].title}</h5>
@@ -39,4 +62,3 @@ function createCards(prods) {
         i++
     } while (i <= 19);
 }
-
